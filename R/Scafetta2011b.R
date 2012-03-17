@@ -65,8 +65,8 @@ Scafetta2011 <- function() {
   lines(t,h(t)+qerr(t),lty=2)
   lines(t,h(t)-qerr(t),lty=2)
 
-  text(2000,1.10,"S2011: anomaly by",pos=4,cex=0.8)
-  text(2000,0.99,"S2011: 2050= ~0.6C",pos=4,cex=0.8)
+  text(2000,1.20,"S2011: anomaly by",pos=4,cex=0.8)
+  text(2000,1.09,"       2050= ~0.6C",pos=4,cex=0.8)
   text(1850,1.15,"f(t)= C1*cos(2*p*(t-T1)/60) + C2*cos(2*pi*(t-T2)/20)",
        pos=4,cex=0.8)
   text(1850,1.05,"g(t)= C3*cos(2*pi*(t-T3)/10.44) + C4*cos(2*pi*(t-T4)/9.07)",
@@ -165,21 +165,37 @@ Scafetta.tab1 <- function() {
 
   
   results <- list(A=A,a=Scafetta2011.tab1$a[-1]*0.10,
-                  B=B,b=Scafetta2011.tab1$b[-1]*0.40,
+                  B=B,b=Scafetta2011.tab1$b[-1]*0.040,
                   C=C*10,c=Scafetta2011.tab1$c[-1]*0.10)
-  dev.new(); par(bty="n")
-  boxplot(results,ylim=range(a0,b0,c0,A,B,C,Scafetta2011.tab1$a*0.10,
-                    Scafetta2011.tab1$b*0.40,
-                    Scafetta2011.tab1$c*10/(2011-1850)),
+  dev.new(); par(bty="n",col.axis="white")
+  plot(c(0,7),c(-0.5,0.25),type="n",ylim=c(-0.05,0.25),
           main="Scafetta (2011): Table 1",xlab="coeffiecient",
           ylab="estimate (C1,C2)",col=c("wheat","grey"),lwd=2,
           sub=paste(min(trunc(t0[i0])),"-",max(trunc(t0[i0]))),
           cex=1.7)
+  par(col.axis="black")
   grid()
-  points(c(a0,Scafetta2011.tab1$a[1]*0.10,b0,Scafetta2011.tab1$b[1]*0.40,
+  for (i in 1:6) rect(i-0.5,quantile(results[[i]],0.025),
+                      i+0.5,quantile(results[[i]],0.975),
+                      col="grey85",border="grey85")
+  boxplot(results,add=TRUE,col=c("wheat","grey"))
+  points(c(a0,Scafetta2011.tab1$a[1]*0.10,b0,Scafetta2011.tab1$b[1]*0.040,
            c0*10,Scafetta2011.tab1$c[1]*10/(2011-1850)),
-         pch=19,col="red",cex=1.25)
+         pch=c(19,21),col="red",cex=1.25)
 
-  legend(0.4,0.4,c("Replication","From Table 1"),
+  legend(0.4,0.25,c("Our replication","From Table 1"),
          lwd=10,col=c("wheat","grey"),bty="n")
+
+  legend(3.4,0.25,c("Our estimate","From Table 1"),
+         pch=c(19,21),col="red",bty="n")
+
+  lines(c(0.5,2.5),rep(-0.03,2),lty=2,lwd=2,col="red")
+  text(1.5,-0.04,"60 year",col="red")
+
+  lines(c(2.5,4.5),rep(-0.03,2),lty=2,lwd=2)
+  text(3.5,-0.04,"30 year")
+
+  lines(c(4.5,6.5),rep(-0.03,2),lty=2,lwd=2,col="grey")
+  text(5.5,-0.04,"trend",col="grey")
+
 }

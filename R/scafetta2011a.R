@@ -102,14 +102,32 @@ dev.new()
 plot(c(1,n),range(x,na.rm=TRUE),type="n",
      main=paste("Looking at",n/12,"year seqments"),
      xlab="month",ylab="")
-for (i in seq(1,10000*12,b=n)) {
+
+sequence <- seq(1,10000*12,b=n)
+ns <- length(sequence)
+a1 <- rep(NA,ns); b1 <- a1
+ii <- 1
+for (i in sequence) {
   CAL60 <- data.frame(y=x[i:(i+n-1)],x1=c60,x2=s60,x3=c20,x4=s20)
 # Regression analysis & prediction
   FIT60m <- lm(y ~ x1 + x2 + x3 + x4,data=CAL60)
   FIT60 <- predict(FIT60m,newdata=CAL60)
   lines(x[i:(i+n-1)],lwd=2,col="grey")
   lines(FIT60,col="red",lwd=2)
+  a1[ii] <- summary(FIT60m)$coefficients[2]^2 +
+            summary(FIT60m)$coefficients[3]^2
+  b1[ii] <- summary(FIT60m)$coefficients[4]^2 +
+            summary(FIT60m)$coefficients[5]^2
+  ii <- ii + 1
 }
 #dev2bitmap("loehlescafetta2011sequences.png",res=150)
 
+dev.new()
+plot(sqrt(a1),type="l",lwd=3,ylim=c(0,3),
+     main="Fitted 20yr & 60yr amplitudes",
+     xlab="sequence",ylab="amplitude",
+     sub="test: how the amplitudes vary between different sequences")
+mtext("Same underlying harmonics for all sequences",side=4)
+lines(sqrt(b1),lwd=3,col="blue")
+legend(0,3,c("20year","60year"),col=c("blue","black"),lty=1,cex=0.8)
 }

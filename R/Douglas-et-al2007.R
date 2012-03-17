@@ -24,20 +24,20 @@ Douglas2007 <- function() {
     p
 }
 
-  print("REproduction of results in Fig 1. of Douglas et al. (2007)")
-  print("'A comparison of tropical temperature trends with model predictions'")
-  print("INTERNATIONAL JOURNAL OF CLIMATOLOGY")
-  print("Int. J. Climatol. (2007)")
-  print("Published online in Wiley InterScience")
-  print("(www.interscience.wiley.com) DOI: 10.1002/joc.1651")
-  print("")
-  print("Based on Tables I & II in the paper. The values have been") 
-  print("copied from the on-line PDF through acroreader.")
-  print("(the negative sign of the values had to be set to '-')")
+  cat("Reproduction of results in Fig 1. of Douglas et al. (2007)")
+  cat("'A comparison of tropical temperature trends with model predictions'")
+  cat("INTERNATIONAL JOURNAL OF CLIMATOLOGY")
+  cat("Int. J. Climatol. (2007)")
+  cat("Published online in Wiley InterScience")
+  cat("(www.interscience.wiley.com) DOI: 10.1002/joc.1651")
+  cat("")
+  cat("Based on Tables I & II in the paper. The values have been") 
+  cat("copied from the on-line PDF through acroreader.")
+  cat("(the negative sign of the values had to be set to '-')")
 
-  data(Douglasetal.tab1,env=environment())
+  data(Douglasetal.tab1,envir=environment())
   #load("Debunking/data/Douglasetal.tab1.rda")
-  data(Douglasetal.tab2,env=environment())
+  data(Douglasetal.tab2,envir=environment())
   #load("Debunking/data/Douglasetal.tab2.rda")
   X1 <- df2m(Douglasetal.tab1)/1000
   lev1 <- attr(Douglasetal.tab1,'levels')
@@ -61,8 +61,8 @@ Douglas2007 <- function() {
     points(lev2,X2[i,],pch=19,type="b",lty=3,col=lightred)
   }
 
-  Dm <- attr(tab2,'Average')/1000
-  Ds <- 2*attr(tab2,'Std. Dev.')/(sqrt(21)*1000)
+  Dm <- attr(Douglasetal.tab2,'Average')/1000
+  Ds <- 2*attr(Douglasetal.tab2,'Std. Dev.')/(sqrt(21)*1000)
   lines(lev2,Dm,type="b",cex=1.2,lwd=2)
   lines(lev2,Dm+Ds,type="b",cex=0.7)
   lines(lev2,Dm-Ds,type="b",cex=0.7,pch=4)

@@ -9,7 +9,7 @@
 \alias{Lean1995}
 \alias{Lean2004}
 \alias{svalbard}
-\alias{tab1}
+\alias{ssh2011.tab1}
 \alias{vardo}
 \alias{Douglasetal.tab1}
 \alias{Douglasetal.tab2}
@@ -37,7 +37,7 @@ code for the signs in the tables did not correspond to the ASCII code
 used by R. Once these minor issues were fixed, these should be exact
 reproductions of the tables in the papers.  
 
-\code{tab1} is the data from Table 1 in Solheim et al. (2011)
+\code{ssh2011.tab1} is the data from Table 1 in Solheim et al. (2011)
 \code{Douglasetal.tab1} and \code{Douglasetal.tab1} are from Douglas et
 al.
 
@@ -61,7 +61,7 @@ indicator of Solar Activity Closely Associated with Climate, Science
 }
 \usage{
 data(gisp2)
-data(tab1)
+data(ssh2011.tab1)
 data(svalbard)
 data(vardo)
 data(CRU)

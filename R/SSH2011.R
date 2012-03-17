@@ -1,6 +1,47 @@
 # For the Walker test: see 
 Walker.test <- function(N,alpha=0.05) 1 - (1- alpha)^(1/N)
-  
+
+DJF <- function(obs,ssh2011.tab1=NULL) {
+# Manually obtained from eKlima (14.03.2012):
+# Svalbard Longyearbyen  
+#  St.no   Month     TAM    TAMA     TAN    TANM     TAX    TAXM
+#     99840 12.2011    -6.6     6.8   -19.8    -9.4     3.1    -3.8 
+#     99840 01.2012    -3.4    11.9   -15.0    -6.2     4.8    -0.9          
+#     99840 02.2012    -5.6    10.6   -19.1    -8.3     7.0    -2.5
+  eklima <- mean(c(-6.6,-3.4,-5.6))
+  X <- as.matrix(obs)[,3:14]
+  I <- 1:length(obs$year)
+  ii <- I[is.element(obs$year,obs$year[-1])]
+  iii <- I[is.element(obs$year,obs$year[-1]-1)]
+  #print(ii); print(iii)
+  djf <- c(rowMeans(cbind(X[iii,12],X[ii,c(1,2)])),eklima)
+  attr(djf,'year') <- c(obs$year[iii],2011)
+  plot(attr(djf,'year'),djf,type="b",pch=19)
+  polygon(c(2008,2020,2020,2008,2008),
+          c(-20.5,-20.5,-14,-14,-20.5),
+          col="grey",border="grey")
+  lines(rep(2008,2),c(-50,50),col="red",lty=2)
+  lines(c(2008,2020),rep(-17.2,2),lwd=3,col="grey30")
+  if (!is.null(ssh2011.tab1)) {
+    if (ssh2011.tab1$yr1[4]==1924) ssh2011.tab1$yr1[4] <- 1934
+                                        # The year in Table 1 must be wrong
+    n <- length(ssh2011.tab1$djf)
+    for (i in 1:n) {
+      lines(c(ssh2011.tab1$yr1[i],ssh2011.tab1$yr2[i]),
+            rep(ssh2011.tab1$djf[i],2),lty=3,col="red")
+    }
+    lines(attr(djf,'year'),filter(djf,rep(1,7)/7),col="pink",lwd=3)
+    # SCL=11 years: -17.2 = ( M(2008,2009,2010,2011)*4 + M(2012:2018)*7 ) /11
+    M <- round(mean(djf[is.element(attr(djf,'year'),2008:2011)]),2)
+    x <- (-17.2*11/7 - M*4/7 )
+    print(paste("mean over 2008-2011=",M,"expect over 2008-2018 is -17.2",
+                "hence the mean of 2012-2018 must be",x))
+    lines(c(1900,2018),rep(x,2),lty=3,col="red")
+  }
+  points(attr(djf,'year'),djf,type="b",pch=19)
+  invisible(djf)
+}
+
 obs2tab1 <- function(obs,tab,winter="djf") {
 # Turn observations into table similar to SSH 2011 Tab1:
   print(summary(tab))
@@ -53,55 +94,55 @@ obs2tab1 <- function(obs,tab,winter="djf") {
   invisible(Tab)
 }
 
-check.table1 <- function(tab1=NULL) {
+check.table1 <- function(ssh2011.tab1=NULL) {
   # Svalbard temperature.
-  if (is.null(tab1)) {
+  if (is.null(ssh2011.tab1)) {
     print("use the Svalbard temperature:")
-    data(tab1,envir=environment())
-    print(summary(tab1))
-    #load("Debunking/data/tab1.rda")
-    tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
+    data(ssh2011.tab1,envir=environment())
+    print(summary(ssh2011.tab1))
+    #load("Debunking/data/ssh2011.tab1.rda")
+    ssh2011.tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
   }
   #load("Debunking/data/svalbard.rda")
   data(svalbard,envir=environment())
-  obs2tab1(svalbard,tab1) -> Tab1
-  n <- sqrt(attr(Tab1,'n'))
-  attach(tab1)
+  obs2tab1(svalbard,ssh2011.tab1) -> Ssh2011.Tab1
+  n <- sqrt(attr(Ssh2011.Tab1,'n'))
+  attach(ssh2011.tab1)
   plot(range(yr1,yr2,na.rm=TRUE),range(djf,jja,na.rm=TRUE),type="n",
        main="Check Table 1",xlab="Time",ylab="Temperature")
   NN <- length(yr1)
   for (i in 1:NN) {
    if (is.finite(yr1[i]) & is.finite(yr2[i])) {
-     rect(Tab1$yr1[i],Tab1$maat[i]-attr(Tab1,'sigma.maat')/n,
-          Tab1$yr2[i],Tab1$maat[i]+attr(Tab1,'sigma.maat')/n,
+     rect(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$maat[i]-attr(Ssh2011.Tab1,'sigma.maat')/n,
+          Ssh2011.Tab1$yr2[i],Ssh2011.Tab1$maat[i]+attr(Ssh2011.Tab1,'sigma.maat')/n,
           col="grey80",border="grey70",lty=1)
-     rect(Tab1$yr1[i],Tab1$djf[i]-attr(Tab1,'sigma.djf')/n,
-          Tab1$yr2[i],Tab1$djf[i]+attr(Tab1,'sigma.djf')/n,
+     rect(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$djf[i]-attr(Ssh2011.Tab1,'sigma.djf')/n,
+          Ssh2011.Tab1$yr2[i],Ssh2011.Tab1$djf[i]+attr(Ssh2011.Tab1,'sigma.djf')/n,
           col="grey80",border="grey70",lty=1)
-     rect(Tab1$yr1[i],Tab1$jja[i]-attr(Tab1,'sigma.jja')/n,
-          Tab1$yr2[i],Tab1$jja[i]+attr(Tab1,'sigma.jja')/n,
+     rect(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$jja[i]-attr(Ssh2011.Tab1,'sigma.jja')/n,
+          Ssh2011.Tab1$yr2[i],Ssh2011.Tab1$jja[i]+attr(Ssh2011.Tab1,'sigma.jja')/n,
           col="grey80",border="grey70",lty=1)
-     rect(Tab1$yr1[i],Tab1$mam[i]-attr(Tab1,'sigma.mam')/n,
-          Tab1$yr2[i],Tab1$mam[i]+attr(Tab1,'sigma.mam')/n,
+     rect(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$mam[i]-attr(Ssh2011.Tab1,'sigma.mam')/n,
+          Ssh2011.Tab1$yr2[i],Ssh2011.Tab1$mam[i]+attr(Ssh2011.Tab1,'sigma.mam')/n,
           col="grey80",border="grey70",lty=1)
-     rect(Tab1$yr1[i],Tab1$son[i]-attr(Tab1,'sigma.son')/n,
-          Tab1$yr2[i],Tab1$son[i]+attr(Tab1,'sigma.son')/n,
+     rect(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$son[i]-attr(Ssh2011.Tab1,'sigma.son')/n,
+          Ssh2011.Tab1$yr2[i],Ssh2011.Tab1$son[i]+attr(Ssh2011.Tab1,'sigma.son')/n,
           col="grey80",border="grey70",lty=1)
 
      lines(c(yr1[i],yr2[i]),rep(maat[i],2),col="black",lwd=3)
-     lines(c(Tab1$yr1[i],Tab1$yr2[i]),rep(Tab1$maat[i],2),col="grey40",
+     lines(c(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$yr2[i]),rep(Ssh2011.Tab1$maat[i],2),col="grey40",
            lwd=3,lty=2)
      lines(c(yr1[i],yr2[i]),rep(djf[i],2),col="blue",lwd=3)
-     lines(c(Tab1$yr1[i],Tab1$yr2[i]),rep(Tab1$djf[i],2),col="steelblue",
+     lines(c(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$yr2[i]),rep(Ssh2011.Tab1$djf[i],2),col="steelblue",
            lwd=3,lty=2)
      lines(c(yr1[i],yr2[i]),rep(mam[i],2),col="darkgreen",lwd=3)
-     lines(c(Tab1$yr1[i],Tab1$yr2[i]),rep(Tab1$mam[i],2),col="green",
+     lines(c(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$yr2[i]),rep(Ssh2011.Tab1$mam[i],2),col="green",
            lwd=3,lty=2)
      lines(c(yr1[i],yr2[i]),rep(jja[i],2),col="wheat",lwd=3)
-     lines(c(Tab1$yr1[i],Tab1$yr2[i]),rep(Tab1$jja[i],2),col="yellow",
+     lines(c(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$yr2[i]),rep(Ssh2011.Tab1$jja[i],2),col="yellow",
            lwd=3,lty=2)
      lines(c(yr1[i],yr2[i]),rep(son[i],2),col="darkred",lwd=3)
-     lines(c(Tab1$yr1[i],Tab1$yr2[i]),rep(Tab1$son[i],2),col="red",
+     lines(c(Ssh2011.Tab1$yr1[i],Ssh2011.Tab1$yr2[i]),rep(Ssh2011.Tab1$son[i],2),col="red",
            lwd=3,lty=2)
    }
   }
@@ -109,8 +150,8 @@ check.table1 <- function(tab1=NULL) {
 }
 
 
-Solheim.et.al.2011 <- function(obs=NULL,tab1=NULL,N.tests=30000) {
-#tab1 <- NULL; N.tests=1000  # Testing the script.
+Solheim.et.al.2011 <- function(obs=NULL,ssh2011.tab1=NULL,N.tests=30000) {
+#ssh2011.tab1 <- NULL; N.tests=1000  # Testing the script.
 # R-package which provides the SCL results from Benestad (2005), GRL:  
 require(cyclones)
 
@@ -118,29 +159,29 @@ require(cyclones)
 require(lmtest)
 
 # Retrieve the result from Table 1 in Solheim et al (2011): 
-#tab1 <- read.table("SSH201b-table1.txt",header=TRUE)
-if (is.null(tab1))  {
-  #load("Debunking/data/tab1.rda")
-  data(tab1,envir=environment())
-  tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
+#ssh2011.tab1 <- read.table("SSH201b-table1.txt",header=TRUE)
+if (is.null(ssh2011.tab1))  {
+  #load("Debunking/data/ssh2011.tab1.rda")
+  data(ssh2011.tab1,envir=environment())
+  ssh2011.tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
 }
 
 # If other station data is provided, replace the Svalbard temperatures
 # with new temperatures.
 if (!is.null(obs)) {
   print("Use other station data")
-  obs2tab1(obs,tab1) -> Tab1
-  rm(tab1)
-  Tab1 -> tab1
-  print(tab1)
+  obs2tab1(obs,ssh2011.tab1) -> Ssh2011.Tab1
+  rm(ssh2011.tab1)
+  Ssh2011.Tab1 -> ssh2011.tab1
+  print(ssh2011.tab1)
 } else {
 # Make a copy of the table and estimate sigmas simultaneously
   #load("Debunking/data/svalbard.rda")
   data(svalbard,envir=environment())
-  obs2tab1(svalbard,tab1) -> Tab1
+  obs2tab1(svalbard,ssh2011.tab1) -> Ssh2011.Tab1
 }
 
-attach(tab1)
+attach(ssh2011.tab1)
 NN <- length(scl)
 
 
@@ -183,10 +224,18 @@ for (i in 1:M) {
 # Compare SCL 
 dev.new()
 plot(yr.min,scl,pch=19,ylim=c(18,6),type="b",
-     maion="SCL from SSH2011 & B2005")
+     maion="SCL from SSH2011, B2005, F-C&L1991")
 points(yr.grl,scl.grl,pch=19,col="red",type="b")
 grid()
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
+
+data(fl1991,envir=environment())
+i1 <- (fl1991$Cntr.Year > 1900)
+y <- fl1991$L[i1] # plot with same year as SSH
+points(yr.min,y,type="b",pch=21,lty=2,col="blue")
+legend(1980,16,c("SSH2011","B2005","F-C&L1991"),
+       col=c("black","red","blue"),pch=c(19,19,21),
+       lty=c(1,1,2),bg="grey95")
 
 # Estimate errors based on differences in SCL estimates:
 scl.err <- scl[is.finite(scl)] - scl.grl
@@ -208,7 +257,7 @@ plot(x,y,xlim=c(1900,2020),ylim=c(15,8),
      pch=19,type="b",main="Solar Cycle Length",
      ylab="Length (yr)", xlab="Year")
 grid()
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
 t <- seq(-1,1,length=length(y))
 scl.trend <- lm(y ~ t)
 abline(scl.trend,lty=3,col="grey")
@@ -235,11 +284,11 @@ print(cor(y,z))
 
 dev.new()
 acf(y,main="detrended SCL autocorrelation") -> scl.ar
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
 
 dev.new()
 acf(z,main="detrended DJF autocorrelation") -> djf.ar
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
 
 # Monte-Carlo simulations to estimate the null-distribution for correlation:
 cor.null <- rep(NA,N.tests)
@@ -270,7 +319,7 @@ for (i in 1:N.tests) {
   ## generate red noise with the same autocorrelation as SCL
   wn.s <- rnorm(length(y),mean=0,sd=scl.sd)
   wn.t <- rnorm(length(z),mean=rep(0,length(z),
-                            sd=attr(Tab1,'sigma.djf')/sqrt(attr(Tab1,'n'))))
+                            sd=attr(Ssh2011.Tab1,'sigma.djf')/sqrt(attr(Ssh2011.Tab1,'n'))))
     
 ## perform two correlation tests
 # based on error estimates of temp & SCL:  
@@ -296,6 +345,9 @@ p.ssh <- round(100*sum( abs(cor.ssh) > abs(cor(y,z)) )/N.tests,2)
 h.err <- hist(cor.err,breaks=seq(-1,1,length=30),plot=FALSE)
 h.ssh <- hist(cor.ssh,breaks=seq(-1,1,length=30),plot=FALSE)
 
+print(paste("95%CI=",quantile(cor.err,0.025),"-",quantile(cor.err,0.975)))
+print("Reported 95% CI in Solheim et al. (2011): 0.54--0.96")
+
 dev.new(ces.sub=0.75)
 plot(h.null$mids,h.null$density/max(h.null$density),type="n",
      ylim=c(0,max(h.null$density,h.err$density)),ylab="probability density",
@@ -316,8 +368,9 @@ lines(rep(mean(cor.ssh),2),c(0,10),lwd=1,col="grey45",lty=3)
 lines(rep(-0.97,2),c(0,10),lwd=1,lty=3)
 lines(rep(-0.52,2),c(0,10),lwd=1,lty=3)
 grid()
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
-legend(0.3,1.7,c("Monte-Carlo","bootstrap","r(SSH2011)","r(B2005)","95%(SSH2011"),
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
+legend(0.3,1.7,c("Monte-Carlo","bootstrap","r(SSH2011)","r(B2005)",
+                 "95%(SSH2011)"),
         lwd=c(3,1,2,2,1),col=c("black","grey45","red","blue","black"),
         lty=c(1,3,2,2,2),bg="grey95")
 
@@ -331,7 +384,7 @@ dev.new()
 plot(h.dw$mids,h.dw$density,lwd=3,type="l",
      main="Durbin-Watson",col="grey")
 lines(rep(test.results$statistic,2),c(0,10),lwd=2,col="red")
-mtext(attr(tab1,"description"),side=4,cex=0.8,col="grey")
+mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
 
 # The Walker test to assess the field significance: 10 different tests
 # (4 seasons + 1 annual mean) x (0 & 1 lag)
@@ -340,7 +393,7 @@ p.W <- round(Walker.test(10),4)
 print(paste( "p(r)=",p.cor,"p(DW)=",p.dw,"  p(Walker,N=10)=",p.W) )
 print(paste( "Field signf. correlation at 0.05% level:",(p.cor<p.W) ) )
 print(paste( "Field signf. Durbin-Watson test at 0.05% level:",(p.dw<p.W) ) )
-detach(tab1)
+detach(ssh2011.tab1)
 }
 
 do.vardo <- function() {

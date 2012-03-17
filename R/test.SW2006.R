@@ -41,7 +41,7 @@ Scafetta2006 <- function (GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE
     
     Forcings <- function() {
         #load("Debunking/data/forcings.rda")
-        data(forcings,env=environment())
+        data(forcings,envir=environment())
         forcing.names <- names(forcings)
         x11()
         years <- as.numeric(row.names(table(trunc(forcings$Year))))
@@ -560,13 +560,13 @@ Scafetta2006 <- function (GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE
     cmon <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", 
         "Aug", "Sep", "Oct", "Nov", "Dec")
     if (GISS.temp) {
-        data(gistemp,env=environment())
+        data(gistemp,envir=environment())
         #load("Debunking/data/gistemp.rda")
         attach(gistemp)
     }
     else {
         print("Get HadCRUT from URL")
-        data(crutemp,env=environment())
+        data(crutemp,envir=environment())
         #load("Debunking/data/crutemp.rda")
         attach(crutemp)
         gistemp <- crutemp
@@ -574,11 +574,11 @@ Scafetta2006 <- function (GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE
     }
     T2m.mon <- year2monthly(year, T2m)$y
     yr.mon <- year2monthly(year, T2m)$x
-    data(AKRIM,env=environment())
+    data(AKRIM,envir=environment())
     #load("Debunking/data/AKRIM.rda")
-    data(Lean1995,env=environment())
+    data(Lean1995,envir=environment())
     #load("Debunking/data/Lean1995.rda")
-    data(Lean2004,env=environment())
+    data(Lean2004,envir=environment())
     #load("Debunking/data/Lean2004.rda")
     Lean2004.TSI <- Lean2004$X11yrCYCLE.BKGRND
     forcings <- Forcings()
@@ -634,7 +634,7 @@ Scafetta2006 <- function (GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE
     S.4.all <- D.all$D9 + D.all$D10 + D.all$D11 + D.all$D12
     D.4.all <- D.all$D8
     D.3.all <- D.all$D7
-    data(Mauna.Loa,env=environment())
+    data(Mauna.Loa,envir=environment())
     #load("Debunking/data/Mauna.Loa.rda")
     SW2006 <- list(D, x, y, T.sun, Lean2004, x.SW, D.SW, y.SW, 
         x.all, D.all, y.all)
@@ -688,7 +688,7 @@ Scafetta2006 <- function (GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE
     dev.off()
     print("Use the GISS simulations to estimate tranfer fuctions")
     print("SW2005:")
-    data(GISS.GCMs,env=environment())
+    data(GISS.GCMs,envir=environment())
     #load("Debunking/data/GISS.GCMs.rda")
     ngcms <- length(GISS.GCMs$experiments)
     coefs.D3 <- matrix(rep(NA, 6 * ngcms), 6, ngcms)

@@ -1,4 +1,5 @@
 \name{Replication demo scripts.}
+\alias{forskning.no}
 \alias{Humlum.et.al.2011}
 \alias{decomposeFT}
 \alias{LoehleScafetta2011}
@@ -10,6 +11,7 @@
 \alias{Scafetta.tab1}
 \alias{resonanceTest}
 \alias{Solheim.et.al.2011}
+\alias{DJF}
 \alias{do.vardo}
 \alias{Scafetta2006}
 \alias{check.table1}
@@ -67,7 +69,9 @@ all. \code{Walker.test()} is the function for the Walker test to test
 the significance when many tests are made (problem of multiplicity/field
 significance). \code{check.table1()} and \code{obs2tab1()} are
 supporting functions for this replication. \code{do.vardo} repeats the
-analysis for Vardo. Reference: Solheim et al (2011) \url{http://arxiv.org/pdf/1112.3256}
+analysis for Vardo. Reference: Solheim et al (2011)
+\url{http://arxiv.org/pdf/1112.3256}. +code{DJF} extracts the
+December-February mean.
 
 \code{Scafetta2006()} is a modification of the R-scripts used in
 Benestad & Schmidt (2008) replicating and testing the analysis in the
@@ -85,11 +89,21 @@ Douglas et al. (2007) \url{http://www.pas.rochester.edu/~douglass/papers/Publish
 Comparison between cosmogenic Be-10 isotope proxies, CO2, and
 temperature from the Vostoc ice core. \url{http://www.realclimate.org/index.php/archives/2005/05/on-veizers-celestial-climate-driver/}
 
+\code{forskning.no} replicates a figure (again, by Solheim et al.) shown in
+\url{http://www.forskning.no/artikler/2012/mars/316178} that claims that
+the warming has stopped. The figure gives a wrong impression, as it's
+shown on monthly scales where the monthly anomalies swamp the signal. By
+plottingthe monthly mean values instead, the warming trends becomes
+visible. 
+ 
 These papers are also discussed on \url{http://www.RealClimate.org}: \url{http://www.realclimate.org/index.php/archives/2011/12/curve-fitting-and-natural-cycles-the-best-part/} and \url{http://www.realclimate.org/index.php/archives/2011/08/an-exercise-about-meaningful-numbers-examples-from-celestial-attribution-studies/}
 }
 
 \usage{
 Humlum.et.al.2011()
+forskning.no(uah=TRUE,rss=TRUE,giss=TRUE,ncdc=TRUE,hadcrut3=TRUE,
+             lwd=1,ylim=c(-0.4,1),xlim=c(1995,2012),
+             base.period=1981:2010,type="s")
 decomposeFT(N=1000)
 LoehleScafetta2011()
 Scafetta2010()
@@ -100,8 +114,9 @@ resonance(x0=0,v0=0,h=0.1,main=NULL,
 Scafetta.tab1()
 resonanceTest()
 Walker.test(N,alpha=0.05)
-check.table1(tab1=NULL)
-Solheim.et.al.2011(obs=NULL,tab1=NULL,N.tests=30000)
+check.table1(ssh2011.tab1=NULL)
+Solheim.et.al.2011(obs=NULL,ssh2011.tab1=NULL,N.tests=30000)
+DJF(obs,ssh2011.tab1=NULL)
 do.vardo()
 Scafetta2006(GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE, 
     lag = 0, stepwise = TRUE, interval = 1958:2000, same.interval = TRUE, 
@@ -128,6 +143,8 @@ FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.tx
     \item{bivariate}{TRUE: only include soalr forcing and GHG in regression}
     \item{figures}{TRUE: plot figures}
     \item{tables}{TRUE: print tables}
+    \item{ssh2011.tab1}{Table as in \code{ssh2011.tab1} for defining
+      solar cycle epochs, correponding to Table 1 in Solheim et al. (2011).}
     \item{wavelet}{TRUE: do wav}
     \item{boundary}{Boundary for the wavelet: mra}
     \item{x0}{Initial condition for x of oscillator}
@@ -139,7 +156,6 @@ FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.tx
     \item{m}{inertia term for oscillator}
     \item{w0}{frequency term}
     \item{alpha}{level of statistical significance}
-    \item{tab1}{Table correponding to Table 1 in Solheim et al. (2011)}
     \item{N.tests}{Number of Monte-Carlo simulations}
     \item{x}{curve to which harmonics are fitted}
     \item{t}{times in year}
@@ -149,10 +165,22 @@ FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.tx
     \item{N}{length of time series}
     \item{url}{URL address of FL(1991) solar cycle length data.}
     \item{dmi}{Flag: if TRUE read from DMI web site}
+    \item{uah}{Univ. Alabama Huntsville}
+    \item{rss}{REmote Sensing Systems}
+    \item{giss}{NASA/GISS}
+    \item{ncdc}{NOAA NCDC}
+    \item{hadcrut3}{Hadley Centre and Climate Research Unit, U.K.}
+    \item{lwd}{see \code{\link{plot}}}
+    \item{ylim}{see \code{\link{plot}}}
+    \item{xlim}{see \code{\link{plot}}}
+    \item{base.period}{Reference for anomalies.}
+    \item{type}{see \code{\link{plot}}}
+
 }
 \value{A table or lists containing the relevant data.}
 \author{R.E. Benestad}
 \examples{
+forskning.no()
 Humlum.et.al.2011()
 decomposeFT()
 LoehleScafetta2011()
