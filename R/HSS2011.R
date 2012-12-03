@@ -14,14 +14,15 @@ Humlum.et.al.2011 <- function() {
 #Age <- grep("Age",l)
 #last <- grep("49.981",l)
 
-data(gisp2,envir=environment())
+#data("gisp2",envir=environment())
 #gisp2 <- read.table(url,skip=Age[2],
 #                    nrows=last - Age[2],
 #                    col.names=c("age","temp"),as.is=TRUE)
 #attr(gisp2,'url') <- url
 #attr(gisp2,'date') <- "07.01.2012"
 #save(file="Debunking/data/gisp2.rda",gisp2)
-attach(gisp2)
+#attach(gisp2)
+age <- gisp2$age; temp <- gisp2$temp
 # Age: thousand years before present
 x <- age[age < 4]*1000; y <- temp[age < 4]
 

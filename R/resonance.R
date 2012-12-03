@@ -42,6 +42,8 @@ resonance <- function(x0=0,v0=0,h=0.1,main=NULL,
        sub=paste("m=",m,"w0=",w0,"f=",f,"h=",h))
   lines(1:n,F.ext,col="red",lty=2)
 
+  legend(1,max(x,na.rm=TRUE),c("Forcing","response"),col=c("red","black"),
+         lty=c(2,1),lwd=c(1,2),bty="n")
   results <- list(x=x,v=v,F.ext=F.ext)
   invisible(results)
 }
@@ -72,7 +74,7 @@ resonanceTest <- function() {
   dev.new()
   spectrum(y)
 
-  data(co2,envir=environment())
+  #data("co2",envir=environment())
   F.ext <- log(co2)
   spectrum(F.ext,main="log|CO2|")
   dev.new()

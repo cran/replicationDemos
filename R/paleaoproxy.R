@@ -26,7 +26,7 @@ url3 <- "ftp://ftp.ncdc.noaa.gov/pub/data/paleo/icecore/greenland/summit/gisp2/c
 #attr(co2$age.of.ice,"unit") <- "yr BP"  
 #attr(co2$age.of.air,"unit") <- "yr BP"  
 #attr(co2$co2.concentration,"unit") <- "ppmv"
-data(vostoc.co2,envir=environment())
+data("vostoc.co2",envir=environment())
 
 # Save the data in a local file: discard the header..
 #a <- readLines(url2)
@@ -44,7 +44,7 @@ data(vostoc.co2,envir=environment())
 #attr(tas$age.of.ice,"unit") <- "yr BP"  
 #attr(tas$deuterium,"unit") <- "delta D"  
 #attr(tas$temperature,"unit") <- "deg C"
-data(vostoc.temp,envir=environment())
+#data("vostoc.temp",envir=environment())
 
 #print("GISP2")
 #be.10 <- read.table(url3,skip=41,header=FALSE,
@@ -58,7 +58,7 @@ data(vostoc.temp,envir=environment())
 #attr(be.10$age.bottom,"unit") <- "yr"  
 #be.10$Be.10[be.10$Be.10>=999999] <- NA
 #be.10$error[be.10$error>=999999] <- NA
-data(Be.10,envir=environment())
+#data("Be.10",envir=environment())
 be.age <- 0.5*(Be.10$age.top+Be.10$age.bottom)
 #plot(co2$age.of.ice, co2$age.of.air)
 #
@@ -102,20 +102,35 @@ plot(mills,stand(x1),type="l",lwd=4,col="grey",
      main="Historical CO2 Record from the Vostok Ice Core",sub=url1)
 lines(mills,stand(x2),lty=3,col="blue")
 lines(mills,stand(y),lty=2,lwd=2)
+be.hf <- stand(x2 - gauss.filt(x2,5))
+t2.hf <- stand(y - gauss.filt(y,5))
+lines(mills,gauss.filt(stand(x2),5),col="blue")
+lines(mills,gauss.filt(stand(y),5))
 
 good <- is.finite(y) & is.finite(x1) & is.finite(x2)
 y <- y[good]; x1 <- x1[good]; x2 <- x2[good]
+be.hf <- be.hf[good]; t2.hf <- t2.hf[good]
 
 legend(-40000,3,c(paste("CO2",round(cor(y,x1),2)),"TAS    ",paste("Be-10",round(cor(y,x2),2))),
        col=c("grey","black","blue"),
        lwd=c(4,2,1),lty=c(1,2,3),pch=c(NA,NA,2),cex=0.8)
+
+
 dev2bitmap("paleaoproxy_corr.png")
 
 print("Correlation: TAS & CO2:")
 print(cor.test(y,x1))
 print("Correlation: TAS & Be-10:")
 print(cor.test(y,x2))
+print(paste("Correlation: TAS & Be-10 on timescales shorter than :",5*min(diff(mills))))
+print(cor.test(be.hf,t2.hf))
 
+dev.new()
+plot(mills[good],stand(be.hf),type="l",
+     main="The short timescales ~5000 years")
+lines(mills[good],stand(t2.hf),col="red")
+
+results <- list(tas=y,co2=x1,be.10=x2,date=mills[good],be.10.hf=be.hf,tas.hf=t2.hf)
 
 #par(ask=FALSE)
 }

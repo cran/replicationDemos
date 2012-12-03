@@ -22,7 +22,7 @@ print("R-script for the analysis in Benestad, R.E. (2004) ")
 print("'Are temperature trends affected by economic activity? ")
 print("Comment on McKitrick & Michaels', Climate Research CR 27:171-173")
 
-data(gdptemp03,envir=environment()); mm <- gdptemp03
+data("gdptemp03",envir=environment()); mm <- gdptemp03
 ##mm <- read.table("~/data/gdptemp03.txt",header=TRUE,as.is=TRUE)
 lat <- mm$LAT
 ysrt <- order(lat)

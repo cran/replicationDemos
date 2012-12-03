@@ -5,7 +5,7 @@ print(" 'harmonic model calibrated during the period 1950-2010 is able to ")
 print(" carefully reconstruct the decadal and ,ultidecadal oscillations of the")
 print(" temperature record from 1850-1950.' does not distinguish from a mere ")
 print(" curve fitting exercise: here shown on the ENSO Nino3.4 index:'")
-data(enso,envir=environment())
+#data("enso",envir=environment())
 #load("Debunking/data/enso.rda")
 
 x=enso$year + (enso$month-0.5)/12

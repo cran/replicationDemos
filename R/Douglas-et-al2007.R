@@ -1,4 +1,4 @@
-Douglas2007 <- function() {
+Douglass2007 <- function() {
 
   df2m <- function(X) {
 # Convert the data.frame into a matrix:
@@ -35,9 +35,9 @@ Douglas2007 <- function() {
   cat("copied from the on-line PDF through acroreader.")
   cat("(the negative sign of the values had to be set to '-')")
 
-  data(Douglasetal.tab1,envir=environment())
+  data("Douglasetal.tab1",envir=environment())
   #load("Debunking/data/Douglasetal.tab1.rda")
-  data(Douglasetal.tab2,envir=environment())
+  data("Douglasetal.tab2",envir=environment())
   #load("Debunking/data/Douglasetal.tab2.rda")
   X1 <- df2m(Douglasetal.tab1)/1000
   lev1 <- attr(Douglasetal.tab1,'levels')

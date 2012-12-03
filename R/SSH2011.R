@@ -1,13 +1,17 @@
 # For the Walker test: see 
 Walker.test <- function(N,alpha=0.05) 1 - (1- alpha)^(1/N)
 
-DJF <- function(obs,ssh2011.tab1=NULL) {
+DJF <- function(obs=NULL,ssh2011.tab1=NULL) {
 # Manually obtained from eKlima (14.03.2012):
 # Svalbard Longyearbyen  
 #  St.no   Month     TAM    TAMA     TAN    TANM     TAX    TAXM
 #     99840 12.2011    -6.6     6.8   -19.8    -9.4     3.1    -3.8 
 #     99840 01.2012    -3.4    11.9   -15.0    -6.2     4.8    -0.9          
 #     99840 02.2012    -5.6    10.6   -19.1    -8.3     7.0    -2.5
+  if (is.null(obs)) {
+    #data("svalbard")
+    obs <- svalbard
+  }
   eklima <- mean(c(-6.6,-3.4,-5.6))
   X <- as.matrix(obs)[,3:14]
   I <- 1:length(obs$year)
@@ -45,7 +49,11 @@ DJF <- function(obs,ssh2011.tab1=NULL) {
 obs2tab1 <- function(obs,tab,winter="djf") {
 # Turn observations into table similar to SSH 2011 Tab1:
   print(summary(tab))
-  attach(tab)
+  #attach(tab)
+  yr1 <- tab$yr1;  yr2 <- tab$yr2; yr.min <- ssh2011.tab1$yr.min
+  djf <- ssh2011.tab1$djf;  jja <- ssh2011.tab1$jja
+  mam <- ssh2011.tab1$mam;  son <- ssh2011.tab1$son
+  maat <- ssh2011.tab1$maat
   X <- as.matrix(obs)[,3:14]
   #print(dim(X))
   maat[] <- NA; djf[] <- NA; mam[] <- NA; jja[] <- NA; son[] <- NA
@@ -87,7 +95,7 @@ obs2tab1 <- function(obs,tab,winter="djf") {
   attr(Tab,"sigma.jja") <- s.jja
   attr(Tab,"sigma.son") <- s.son
   attr(Tab,"n") <- n
-  detach(tab)
+  #detach(tab)
   invisible(Tab)
 
   attr(Tab,"description") <- paste("obs2tab1:",attr(obs,"description"))
@@ -98,16 +106,21 @@ check.table1 <- function(ssh2011.tab1=NULL) {
   # Svalbard temperature.
   if (is.null(ssh2011.tab1)) {
     print("use the Svalbard temperature:")
-    data(ssh2011.tab1,envir=environment())
+    #data("ssh2011.tab1",envir=environment())
     print(summary(ssh2011.tab1))
     #load("Debunking/data/ssh2011.tab1.rda")
     ssh2011.tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
   }
   #load("Debunking/data/svalbard.rda")
-  data(svalbard,envir=environment())
+  #data("svalbard",envir=environment())
   obs2tab1(svalbard,ssh2011.tab1) -> Ssh2011.Tab1
   n <- sqrt(attr(Ssh2011.Tab1,'n'))
-  attach(ssh2011.tab1)
+  #attach(ssh2011.tab1)  the 'anti-social behaviour' policy:
+  # package code must not modify the search path.
+  yr1 <- ssh2011.tab1$yr1;  yr2 <- ssh2011.tab1$yr2;
+  djf <- ssh2011.tab1$djf;  jja <- ssh2011.tab1$jja
+  mam <- ssh2011.tab1$mam;  son <- ssh2011.tab1$son
+  maat <- ssh2011.tab1$maat
   plot(range(yr1,yr2,na.rm=TRUE),range(djf,jja,na.rm=TRUE),type="n",
        main="Check Table 1",xlab="Time",ylab="Temperature")
   NN <- length(yr1)
@@ -162,9 +175,12 @@ require(lmtest)
 #ssh2011.tab1 <- read.table("SSH201b-table1.txt",header=TRUE)
 if (is.null(ssh2011.tab1))  {
   #load("Debunking/data/ssh2011.tab1.rda")
-  data(ssh2011.tab1,envir=environment())
+  data("ssh2011.tab1",envir=environment())
+  #print(summary(ssh2011.tab1))
   ssh2011.tab1$yr1[4] <- 1934 # The year in Table 1 must be wrong
 }
+#print("HERE2")
+#print(ssh2011.tab1$yr1)
 
 # If other station data is provided, replace the Svalbard temperatures
 # with new temperatures.
@@ -177,11 +193,18 @@ if (!is.null(obs)) {
 } else {
 # Make a copy of the table and estimate sigmas simultaneously
   #load("Debunking/data/svalbard.rda")
-  data(svalbard,envir=environment())
+  data("svalbard",envir=environment())
+  #print(summary(svalbard))
   obs2tab1(svalbard,ssh2011.tab1) -> Ssh2011.Tab1
 }
+#print("HERE3")
 
-attach(ssh2011.tab1)
+#attach(ssh2011.tab1)
+#print("HERE")
+scl <- ssh2011.tab1$scl; yr.min <- ssh2011.tab1$yr.min
+yr1 <- ssh2011.tab1$yr1;  yr2 <- ssh2011.tab1$yr2;
+maat <- ssh2011.tab1$maat; djf <- ssh2011.tab1$djf
+print(maat)
 NN <- length(scl)
 
 
@@ -224,12 +247,12 @@ for (i in 1:M) {
 # Compare SCL 
 dev.new()
 plot(yr.min,scl,pch=19,ylim=c(18,6),type="b",
-     maion="SCL from SSH2011, B2005, F-C&L1991")
+     main="SCL from SSH2011, B2005, F-C&L1991")
 points(yr.grl,scl.grl,pch=19,col="red",type="b")
 grid()
 mtext(attr(ssh2011.tab1,"description"),side=4,cex=0.8,col="grey")
 
-data(fl1991,envir=environment())
+#data("fl1991",envir=environment())
 i1 <- (fl1991$Cntr.Year > 1900)
 y <- fl1991$L[i1] # plot with same year as SSH
 points(yr.min,y,type="b",pch=21,lty=2,col="blue")
@@ -393,12 +416,12 @@ p.W <- round(Walker.test(10),4)
 print(paste( "p(r)=",p.cor,"p(DW)=",p.dw,"  p(Walker,N=10)=",p.W) )
 print(paste( "Field signf. correlation at 0.05% level:",(p.cor<p.W) ) )
 print(paste( "Field signf. Durbin-Watson test at 0.05% level:",(p.dw<p.W) ) )
-detach(ssh2011.tab1)
+#detach(ssh2011.tab1)
 }
 
 do.vardo <- function() {
   # Vardø temperature:
   #load("Debunking/data/vardo.rda")
-  data(vardo,envir=environment())
+  #data("vardo",envir=environment())
   Solheim.et.al.2011(obs=vardo)
 }

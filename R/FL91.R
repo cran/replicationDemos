@@ -22,7 +22,7 @@ FL1991 <- function(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/suncl
     attr(fl1991,'url') <- url
     attr(fl1991,'solmax') <- scl3
   } else {
-    data(fl1991,envir=environment())
+    #data("fl1991",envir=environment())
   }
 
   plot(fl1991$Cntr.Year,fl1991$L,type="b",pch=19)

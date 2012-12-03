@@ -4,7 +4,7 @@
 LoehleScafetta2011 <- function() {
   
 #CRU <- read.table("CRU-T2m.mon.txt")
-data(CRU,envir=environment())  
+#data("CRU",envir=environment())  
 yymm <- sort(rep(CRU[,1],12)) + (rep(1:12,length(CRU[,1]))-0.5)/12
 
 # It seems they used annual data:

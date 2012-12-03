@@ -86,7 +86,8 @@ data(Scafetta2011.tab1)
 data(fl1991)
 }
 
-\value{Lists, data.frames, or vecors containing the relevant data.}
+\value{Lists, data.frames, or vecors containing the relevant data. All
+  the data have attributes providing meta-data information.}
 \author{R.E. Benestad}
 \keyword{data}
 

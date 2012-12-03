@@ -1,4 +1,4 @@
-\name{Replication demo scripts.}
+\name{Replication}
 \alias{forskning.no}
 \alias{Humlum.et.al.2011}
 \alias{decomposeFT}
@@ -18,9 +18,13 @@
 \alias{obs2tab1}
 \alias{Walker.test}
 \alias{MM2004}
-\alias{Douglas2007}
+\alias{Douglass2007}
 \alias{paleaoproxy}
 \alias{FL1991}
+\alias{diffdemo}
+\alias{diff12}
+\alias{diff12demo}
+\alias{Humlum.et.al.2012}
 \title{Demonstrations which debunk some methods and analytical set-ups.}
 \description{
 This set of function provide demonstrations showing why the choice of
@@ -34,11 +38,16 @@ code sharing and open-source can be an effective means of resolving
 differences. Methods and analytical set-up should be tested with
 surrogate data for which the anwers are known a priori (a kind of method
 calibration and evaluation). The spirit of this is very much like the
-replication carried out by Benestad and Schmidt (2009) \url{http://pubs.giss.nasa.gov/abs/be02100q.html}
+replication carried out by Benestad and Schmidt (2009)
+\url{http://pubs.giss.nasa.gov/abs/be02100q.html}
 
 \code{Humlum.et.al.2011()} exmines the results of Humlum et al. (2011)
 \url{http://www.sciencedirect.com/science/article/pii/S0921818111001457}
 and extends their analysis to the data that they cut off.
+
+\code{Humlum.et.al.2012()} exmines the results of Humlum et al. (2012)
+\url{http://www.sciencedirect.com/science/article/pii/S0921818112001658}.
+The URLs for the data are given by \code{URLs4HSS2012()}
 
 \code{LoehleScafetta2011()}. Reference: Loehle and Scafetta (2011) \url{http://benthamscience.com/open/toascj/articles/V005/74TOASCJ.htm}
 
@@ -101,6 +110,13 @@ These papers are also discussed on \url{http://www.RealClimate.org}: \url{http:/
 
 \usage{
 Humlum.et.al.2011()
+Humlum.et.al.2012(wfl=12,forcing=FALSE,HadCRUT4=FALSE,HadSST3=FALSE)
+diff12(x,wfl=NULL)
+diffdemo(x=0.7*cos(seq(0,10*pi,length=1000))+0.4*rnorm(1000),
+                     y=0.9*cos(seq(0,10*pi,length=1000))+0.3*rnorm(1000))
+diff12demo(x=0.5*cos(seq(0,10*pi,length=1200))+rnorm(1200),
+                     y=0.7*cos(seq(0,10*pi,length=1200))+rnorm(1200),
+                     wfl=12)
 forskning.no(uah=TRUE,rss=TRUE,giss=TRUE,ncdc=TRUE,hadcrut3=TRUE,
              lwd=1,ylim=c(-0.4,1),xlim=c(1995,2012),
              base.period=1981:2010,type="s")
@@ -116,7 +132,7 @@ resonanceTest()
 Walker.test(N,alpha=0.05)
 check.table1(ssh2011.tab1=NULL)
 Solheim.et.al.2011(obs=NULL,ssh2011.tab1=NULL,N.tests=30000)
-DJF(obs,ssh2011.tab1=NULL)
+DJF(obs=NULL,ssh2011.tab1=NULL)
 do.vardo()
 Scafetta2006(GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE, 
     lag = 0, stepwise = TRUE, interval = 1958:2000, same.interval = TRUE, 
@@ -124,10 +140,11 @@ Scafetta2006(GISS.temp = TRUE, do.MonteCarlo = TRUE, test.bp = TRUE,
     bivariate = TRUE, figures = TRUE, tables = TRUE, wavelet = TRUE, 
     boundary = "reflection")
 MM2004()
-Douglas2007()
+Douglass2007()
 paleaoproxy()
 hfit(x,t,T1=60,T2=20)
-FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.txt")
+FL1991(dmi=FALSE,
+   url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.txt")
 }
 \arguments{
     \item{obs}{observations: station data.}
@@ -157,8 +174,9 @@ FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.tx
     \item{w0}{frequency term}
     \item{alpha}{level of statistical significance}
     \item{N.tests}{Number of Monte-Carlo simulations}
-    \item{x}{curve to which harmonics are fitted}
-    \item{t}{times in year}
+    \item{x}{curve to which harmonics are fitted or time series - a vector of numbers}
+    \item{y}{time series - a vector of numbers}
+    \item{t}{times in yea}
     \item{T1}{periodicity for first harmonic}
     \item{T2}{periodicity for second harmonic}
     \item{do.MonteCarlo}{TRUE: Carry out Monte-Carlo simulations}
@@ -175,18 +193,83 @@ FL1991(dmi=FALSE,url="http://web.dmi.dk/fsweb/solarterrestrial/sunclimate/SCL.tx
     \item{xlim}{see \code{\link{plot}}}
     \item{base.period}{Reference for anomalies.}
     \item{type}{see \code{\link{plot}}}
-
+    \item{wfl}{window filter length}
+    \item{forcing}{TRUE: use log(CO2) rather than CO2}
+    \item{HadCRUT4}{Use HadCRUT4}
+    \item{HadSST3}{Use HadSST3}
 }
 \value{A table or lists containing the relevant data.}
 \author{R.E. Benestad}
 \examples{
+\dontrun{
+# Produce stretched-out temperature graph to hide the trend: Demonstrate
+# how a stretched x-axis for plots of temperature, showing
+# monthly values hide the long-term trend readily visible in the annual
+# mean values.
 forskning.no()
+
+
+# Replicat the results from Humlum et al. (2011)
 Humlum.et.al.2011()
-decomposeFT()
+
+
+# Replicat the results from Humlum et al. (2012)
+Humlum.et.al.2012()
+# Demonstrate the limitations of the diff-operator for two noisy signals
+# (red and black in the upper panel respectively) with similar long-term
+# harmonics. The lower panel shows the lagged correlation for the
+# diff-operated series. 
+diffdemo()
+diff12demo()
+
+
+# Replication of the analysis of Solheim et al. (2011)
+Solheim.et.al.2011()
+
+
+# Replicate the results from Loehle and Scafetta (2011)
 LoehleScafetta2011()
-Walker.test(N=10)
-check.table1()
-Solheim.et.al.2011(N.tests=3000)
+# Demonstration: show that a noise consists of many Fourier components/harmonics
+decomposeFT()
+
+
+# Replicate the analysis done by Benestad & Schmidt (2009) repeating the
+# work of Scafetta (2005, 2006a, 2006b)
+Scafetta2006()
+
+
+# Replicate the results from Scafetta (2010)
+Scafetta2010()
+
+
+# Replicate the results from Scafetta (2011)
+Scafetta2011()
+# Plot the results shown in Table 1 in Scafetta (2011) and the results
+# obtained with an unbiased method.
+Scafetta.tab1()
+# Test the assumption about on good cycle-fit for a curve-fit toanother
+# cycle, as done in Scafetta (2011)     
+ENSO.example()
+# Test the Runge-Kutta integration of a forced damped oscillator to test
+# the claim about resonance made by Scafetta.
+resonanceTest()
+
+
+# Replicate the results from McKitrick & Michaels (2004)
+MM2004()
+
+
+# Replicate the results from Douglass et al. (2007)
+Douglass2007()
+
+
+# Replicate the results from Veizer (2005)
+paleaoproxy()
+
+
+# Replicate the solar cycle length from Friis-Christensen and Lassen (1991)
+FL1991()
+}
 }
 \keyword{manip}
 

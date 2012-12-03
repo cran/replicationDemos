@@ -46,7 +46,7 @@ Scafetta2011 <- function() {
     
 
 
-  data(CRU,envir=environment())  
+  #data("CRU",envir=environment())  
   yymm <- sort(rep(CRU[,1],12)) + (rep(1:12,length(CRU[,1]))-0.5)/12
   # Annual mean temperature:
   t2m <- c(t(CRU[,2:13])); N <- length(t2m)
@@ -102,13 +102,13 @@ Scafetta2011 <- function() {
 }
 
 Scafetta.tab1 <- function() {
-  data(CRU,envir=environment())
+  #data("CRU",envir=environment())
   t0 <- sort(rep(CRU[,1],12)) + (rep(1:12,length(CRU[,1]))-0.5)/12
 
   # It seems they used annual data:
   t2m <- c(t(CRU[,2:13])); N <- length(t2m)  
-  data(Scafetta2011.tab1,envir=environment())
-  data(CMIP3.20c3m.sresa1b,envir=environment())
+  #data("Scafetta2011.tab1",envir=environment())
+  #data("CMIP3.20c3m.sresa1b",envir=environment())
   CMIP3 <- CMIP3.20c3m.sresa1b
   d <- dim(CMIP3)
   A <- rep(NA,d[2]); B <- A; C <- A

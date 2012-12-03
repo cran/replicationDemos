@@ -24,8 +24,10 @@ forskning.no <- function(uah=TRUE,rss=TRUE,giss=TRUE,ncdc=TRUE,hadcrut3=TRUE,
     yrs <- as.numeric(rownames(table(yr)))
     #print(yrs)
     anm <- yrs + NA
-    for (i in 1:length(anm))
-      anm[i] <- mean(X[is.element(yr,yrs[i])])
+    for (i in 1:length(anm)) {
+      ii <- is.element(yr,yrs[i])
+      if (sum(ii)==12) anm[i] <- mean(X[ii])
+    }
     anm              
   }
 
@@ -50,7 +52,7 @@ ref <- paste(min(base.period),max(base.period),sep=" - ")
 dev.new()  
 par(bty="n",las=2)
 plot(x=xlim,y=ylim,ylim=ylim,xlim=xlim,type="n",
-     main="Replication of Humlum et al in forsking.no (March 2012)",
+     main="Replication of Solheim et al in forsking.no (March 2012)",
      sub="forskning.no (replicationDemos)",
      xlab="time",ylab=paste("anomaly wrt",ref,"(deg C)"))  
 grid()
@@ -130,7 +132,7 @@ if (hadcrut3) {
 dev.new()  
 par(bty="n",las=2)
 plot(x=xlim,y=ylim,ylim=ylim,xlim=xlim,type="n",
-     main="Humlum et al in forsking.no: annual means",
+     main="Solheim et al in forsking.no: annual means",
      sub="forskning.no (replicationDemos)",
      xlab="time",ylab=paste("anomaly wrt",ref,"(deg C)"))  
 grid()
@@ -142,7 +144,7 @@ if (uah) {
   UAH <- data.frame(x=L(uahmsu$Year),y=annual(uahtemp,uahmsu$Year))
   lines(UAH,col="blue",type="b",pch=19,cex=1.2)
   uahtrend <- lm(y ~ x, data=UAH); uahstat <- summary(uahtrend)
-  lines(UAH$x,predict(uahtrend),col="blue",lty=2)
+  lines(UAH$x[is.finite(UAH$y)],predict(uahtrend),col="blue",lty=2)
   trendleg[1] <- paste(round(uahstat$coefficients[2]*10,2)," [",
                     round(2*uahstat$coefficients[4]*10,2),"]",sep="")
 }
@@ -150,7 +152,7 @@ if (rss) {
   RSS <- data.frame(x=L(rssmsu$year),y=annual(rsstemp,rssmsu$year))
   lines(RSS,type="b",pch=19,cex=1.2)
   rsstrend <- lm(y ~ x, data=RSS); rssstat <- summary(rsstrend)
-  lines(RSS$x,predict(rsstrend),col="black",lty=2)
+  lines(RSS$x[is.finite(RSS$y)],predict(rsstrend),col="black",lty=2)
   trendleg[2] <- paste(round(rssstat$coefficients[2]*10,2)," [",
                     round(2*rssstat$coefficients[4]*10,2),"]",sep="")  
 }
